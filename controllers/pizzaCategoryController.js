@@ -1,29 +1,29 @@
-const PizzaCategory = require('../models/pizzaCategory'); // Importation du modèle PizzaCategory
+const Pizzacategory = require('../models/pizzacategory');
 
 // Récupération de toutes les catégories de pizza
-const getAllPizzaCategories = async (req, res) => {
+exports.getAllpizzacategory = async (req, res) => {
   try {
-    const pizzaCategories = await PizzaCategory.findAll(); // Récupère toutes les catégories de pizza depuis la base de données
-    res.json(pizzaCategories); // Envoie les catégories de pizza en tant que réponse JSON
+    const pizzaCategories = await Pizzacategory.findAll();
+    res.json(pizzaCategories);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Erreur serveur' }); // En cas d'erreur, renvoie une réponse d'erreur avec le statut 500
+    res.status(500).json({ message: 'Erreur serveur' });
   }
 };
 
 // Création d'une nouvelle catégorie de pizza
-const createPizzaCategory = async (req, res) => {
+exports.createpizzacategory = async (req, res) => {
   try {
-    const pizzaCategory = await PizzaCategory.create(req.body); // Crée une nouvelle catégorie de pizza avec les données du corps de la requête
-    res.status(201).json(pizzaCategory); // Envoie la catégorie de pizza créée en tant que réponse JSON avec le statut 201 (Créé)
+    const pizzaCategory = await Pizzacategory.create(req.body);
+    res.status(201).json(pizzaCategory);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Erreur serveur' }); // En cas d'erreur, renvoie une réponse d'erreur avec le statut 500
+    res.status(500).json({ message: 'Erreur serveur' });
   }
 };
 
 // Exportation des fonctions de contrôleur
 module.exports = {
-  getAllPizzaCategories,
-  createPizzaCategory,
+  getAllPizzacategories,
+  createPizzacategory,
 };

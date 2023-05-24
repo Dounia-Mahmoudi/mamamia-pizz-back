@@ -1,14 +1,17 @@
 const express = require('express');
 const router = express.Router();
+const authController = require('../controllers/authController');
 const reservationController = require('../controllers/reservationController');
 
-// Route pour récupérer toutes les réservations
-router.get('/', reservationController.getAllReservations);
+router.use(authController.protect);
 
-// Route pour créer une nouvelle réservation
-router.post('/', reservationController.createReservation);
+router.route('/')
+  .get(authController.restrictTo('admin'), reservationController.getAllReservations)
+  .post(authController.restrictTo('admin'), reservationController.createReservation);
 
-// Route pour supprimer une réservation
-router.delete('/:id_reservation', reservationController.deleteReservation);
+router.route('/:id')
+  .get(authController.restrictTo('admin'), reservationController.getReservation)
+  .put(authController.restrictTo('admin'), reservationController.updateReservation)
+  .delete(authController.restrictTo('admin'), reservationController.deleteReservation);
 
 module.exports = router;

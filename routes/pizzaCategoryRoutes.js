@@ -1,12 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const pizzaCategoryController = require('../controllers/pizzaCategoryController');
+const pizzacategoryController = require('../controllers/pizzacategoryController');
+const authController = require('../controllers/authController');
+const Pizzacategory = require('../models/pizzacategory');
+
 
 // Route pour récupérer toutes les catégories de pizza
-router.get('/', pizzaCategoryController.getAllpizzaCategory);
+router.get('/', authController.verifyToken, pizzacategoryController.getAllpizzacategory);
 
 // Route pour créer une nouvelle catégorie de pizza
-router.post('/', pizzaCategoryController.createpizzaCategory);
+router.post('/', authController.verifyToken, authController.isAdmin, pizzacategoryController.createpizzacategory);
 
 module.exports = router;
-

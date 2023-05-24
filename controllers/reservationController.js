@@ -1,6 +1,7 @@
-const Reservation = require('../models/Reservation'); // Importation du modèle Reservation
+let reservations = require('../mock-reservation')
+const { ReservationModel, sequelize } = require('../db/sequelize')
 
-// Création d'une nouvelle réservation
+
 const createReservation = async (req, res) => {
   try {
     const newReservation = await Reservation.create(req.body); // Crée une nouvelle réservation avec les données du corps de la requête

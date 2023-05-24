@@ -1,68 +1,62 @@
-// Importation des modules nécessaires
 const bcrypt = require('bcrypt');
-const { Sequelize, DataTypes } = require('sequelize');
-const pizzaCategoryModel = require('../models/pizzaCategory');
-const pizza = require('../models/pizza');
-const reservation = require('../models/reservation');
+const { sequelize, DataTypes, initDb } = require('./db/sequelize'); // Utilisez la déstructuration pour importer les éléments nécessaires
+const PizzaCategory = require('../models/pizzacategory');
+const Pizza = require('../models/pizza');
+const Reservation = require('../models/reservation');
+const User = require('../models/user');
+const reservations = require('./mock-reservations');
 
-// Créer une instance Sequelize pour établir la connexion à la base de données
-const sequelize = new Sequelize('mamamiapizz', 'root', 'Lechef47', {
- host: 'localhost',
- dialect: 'mariadb',
- logging: false
+const sequelize = new Sequelize('mamamia_pizz', 'root', 'Lechef47', {  // Supprimez cette ligne
+  host: 'localhost',
+  dialect: 'mariadb',
+  logging: false
 });
 
-// Définition des modèles : 'PizzaCategory' 'pizza' 'reservation'
-const PizzaCategory = pizzaCategoryModel(sequelize, DataTypes);
-const Pizza = pizza(sequelize, DataTypes);
-const Reservation = reservation(sequelize, DataTypes);
+const PizzaCategory = PizzaCategoryModel(sequelize, DataTypes);
+const Pizza = PizzaModel(sequelize, DataTypes);
+const Reservation = ReservationModel(sequelize, DataTypes);
+const User = UserModel(sequelize, DataTypes);
 
-// Association entre les modèles 'PizzaCategory' et 'pizza'
-PizzaCategory.hasMany(Pizza);
+// Association entre les modèles 'PizzaCategory' et 'Pizza'
+PizzaCategory.hasMany(Pizza, {
+  foreignKey: {
+    allowNull: false
+  }
+});
 Pizza.belongsTo(PizzaCategory);
 
-// Fonction pour initialiser la base de données
 const initDb = async () => {
- try {
-   // Synchronisation des modèles avec la base de données
-   await sequelize.sync({ force: true });
+  try {
+    await sequelize.authenticate();
+    console.log('La connexion à la base de données "Mamamia pizz" a bien été établie.');
 
-   // Création des enregistrements de test pour les modèles 'PizzaCategory', 'pizza', 'reservation'
-   await PizzaCategory.bulkCreate([
-     { nom_pizzaCategory: 'Pizza base crème' },
-     { nom_pizzaCategory: 'Pizza signature' },
-     { nom_pizzaCategory: 'Pizza base tomate' }
-   ]);
+    // Synchronisation des modèles et création des données initiales
+    await sequelize.sync({ force: true });
 
-   await Pizza.bulkCreate([
-     { name: 'Mamacita', pizzaCategoryId: 1 },
-     // ... Autres enregistrements de pizzas ...
-   ]);
+    // await Reservation.bulkCreate(reservations);
 
-   await Reservation.bulkCreate([
-     { name: 'Client 1', email: 'client1@example.com', phone: '123456789', date: new Date(), time: '18:00:00', table_number: 1 },
-     // ... Autres enregistrements de réservations ...
-   ]);
+    const passwordHash = await bcrypt.hash('mdp', 10);
+    await Promise.all([
+      User.create({
+        username: 'paul',
+        password: passwordHash,
+        roles: ['user', 'admin']
+      }),
+      User.create({
+        username: 'pierre',
+        password: passwordHash,
+        roles: ['user']
+      })
+    ]);
 
-   console.log('Base de données initialisée avec succès.');
- } catch (error) {
-   console.error('Erreur lors de l\'initialisation de la base de données:', error);
- }
+    console.log('Initialisation de la base de données terminée.');
+  } catch (error) {
+    console.error('Erreur lors de l\'initialisation de la base de données :', error);
+  }
 };
 
-// Vérification de la connexion à la base de données
-sequelize.authenticate()
- .then(() => {
-   console.log('La connexion à la base de données "Mamamia Pizz" a bien été établie.');
-   return initDb(); // Appel de la fonction pour initialiser la base de données
- })
- .catch(error => console.error(`Impossible de se connecter à la base de données: ${error}`));
-
-// Exportation des instances, modèles et fonctions nécessaires
 module.exports = {
- sequelize,
- PizzaCategory,
- Pizza,
- Reservation,
- initDb
+  sequelize,
+  DataTypes,
+  initDb
 };

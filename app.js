@@ -1,34 +1,41 @@
-const express = require('express')
-const morgan = require('morgan')
-const serveFavicon = require('serve-favicon')
-const Sequelize = require('./db/sequelize')
-const cors = require('cors')
-const app = express()
-const port = 3005
+const express = require('express');
+const morgan = require('morgan');
+const serveFavicon = require('serve-favicon');
+const sequelize = require('./db/sequelize');
+const cors = require('cors');
 
-app.use((req, res, next) => {
- res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
- res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
- res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
- next();
- });
-
-sequelize.initDb();
+const app = express();
+const port = 3007;
 
 app
- .use(morgan('dev'))
- .use(serveFavicon(__dirname + '/favicon.ico'))
- .use(express.json())
- .use(cors());
+  .use(morgan('dev'))
+  .use(serveFavicon(__dirname + '/favicon.ico'))
+  .use(express.json())
+  .use(cors());
 
-const reservationRouter = require('./routes/reservationRoutes')
-const pizzaRouter = require('./routes/pizzaRoutes')
-const pizzaCategoryRouter = require('./routes/pizzaCategoryRoutes')
+const reservationRouter = require('./routes/reservationRoutes');
+const userRouter = require('./routes/userRoutes');
+const pizzaRouter = require('./routes/pizzaRoutes');
+const pizzacategoryRouter = require('./routes/pizzacategoryRoutes');
 
-app.use('/api/pizzaCategory', pizzaCategoryRouter)
-app.use('/api/pizza', pizzaRouter)
-app.use('/api/reservation', reservationRouter)
+app
+  .use('/api/reservations', reservationRouter)
+  .use('/api/users', userRouter)
+  .use('/api/pizzas', pizzaRouter)
+  .use('/api/pizzacategory', pizzacategoryRouter);
 
-app.listen(port, () => {
- console.log(`L'application écoute le port ${port}`)
-})
+sequelize
+  .initDb()
+  .then(() => {
+    app.listen(port, () => {
+      console.log(`L'app sur le port ${port}`);
+    });
+  })
+  .catch(error => {
+    console.error('Erreur lors de l\'initialisation de la base de données :', error);
+    // Ajoutez ici le code pour renvoyer une réponse d'erreur appropriée au client
+    // Par exemple, vous pouvez utiliser le middleware pour gérer les erreurs et renvoyer une réponse JSON avec un code d'erreur
+    app.use((err, req, res, next) => {
+      res.status(500).json({ message: 'Erreur serveur' });
+    });
+  });

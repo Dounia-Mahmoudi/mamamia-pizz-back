@@ -1,31 +1,35 @@
-// Importation des modules nécessaires
-const { Sequelize, DataTypes } = require('sequelize');
+const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../db/sequelize');
-const pizzaCategory = require('./pizzaCategory'); // Importation du modèle pizzaCategory
+const PizzaCategory = require('./pizzacategory');
 
-// Définition du modèle Pizza
-const Pizza = sequelize.define('pizza', {
+class Pizza extends Model {}
+
+Pizza.init({
   id_pizza: {
-    type: DataTypes.INTEGER, // Type de données : entier
-    primaryKey: true, // Clé primaire
-    autoIncrement: true // Auto-incrémentation
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true
   },
-  nom_pizza: {
-    type: DataTypes.STRING, // Type de données : chaîne de caractères
-    allowNull: false // Non autorisé d'être nul (obligatoire)
+  pizza_name: {
+    type: DataTypes.STRING,
+    allowNull: false
   },
-  description_pizza: {
-    type: DataTypes.TEXT, // Type de données : texte
-    allowNull: false // Non autorisé d'être nul (obligatoire)
+  pizza_price: {
+    type: DataTypes.FLOAT,
+    allowNull: false
   },
-  prix_pizza: {
-    type: DataTypes.FLOAT, // Type de données : flottant
-    allowNull: false // Non autorisé d'être nul (obligatoire)
+  pizza_category_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'PizzaCategory',
+      key: 'id_pizza_category'
+    }
   }
+}, {
+  sequelize,
+  modelName: 'Pizza',
+  tableName: 'pizza' // Assurez-vous que le nom de la table est correct
 });
 
-// Relation avec le modèle CategoriePizza
-Pizza.belongsTo(pizzaCategory, { foreignKey: 'id_pizzaCategory' });
-
-// Exportation du modèle Pizza
 module.exports = Pizza;
