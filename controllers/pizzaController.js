@@ -1,4 +1,4 @@
-const Pizza = require('../models/Pizza');
+const Pizza = require('../models/pizza');
 
 // Récupération de toutes les pizzas
 const getAllPizzas = async (req, res) => {
@@ -6,7 +6,7 @@ const getAllPizzas = async (req, res) => {
     const pizzas = await Pizza.findAll();
     res.json(pizzas);
   } catch (error) {
-    console.error(error);
+    //console.error(error);
     res.status(500).json({ message: 'Erreur serveur' });
   }
 };

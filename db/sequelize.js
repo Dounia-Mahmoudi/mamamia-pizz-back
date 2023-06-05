@@ -1,62 +1,80 @@
 const bcrypt = require('bcrypt');
-const { sequelize, DataTypes, initDb } = require('./db/sequelize'); // Utilisez la déstructuration pour importer les éléments nécessaires
-const PizzaCategory = require('../models/pizzacategory');
-const Pizza = require('../models/pizza');
-const Reservation = require('../models/reservation');
-const User = require('../models/user');
-const reservations = require('./mock-reservations');
+const { Sequelize, DataTypes } = require('sequelize');
 
-const sequelize = new Sequelize('mamamia_pizz', 'root', 'Lechef47', {  // Supprimez cette ligne
-  host: 'localhost',
-  dialect: 'mariadb',
-  logging: false
+const sequelize = new Sequelize('mamamia_pizz', 'root', 'Lechef47', {
+    host: 'localhost',
+    dialect: 'mysql',
+    logging: false
 });
 
-const PizzaCategory = PizzaCategoryModel(sequelize, DataTypes);
-const Pizza = PizzaModel(sequelize, DataTypes);
-const Reservation = ReservationModel(sequelize, DataTypes);
-const User = UserModel(sequelize, DataTypes);
+const ReservationModel = require('../models/reservation')(sequelize, DataTypes);
+const UserModel = require('../models/user')(sequelize, DataTypes);
+const PizzaCategoryModel = require('../models/pizzaCategory')(sequelize, DataTypes);
+const PizzaModel = require('../models/pizza')(sequelize, DataTypes); // Ajout de l'import du modèle 'pizza'
 
 // Association entre les modèles 'PizzaCategory' et 'Pizza'
-PizzaCategory.hasMany(Pizza, {
-  foreignKey: {
-    allowNull: false
-  }
+PizzaCategoryModel.hasMany(PizzaModel, {
+    foreignKey: {
+        allowNull: false
+    }
 });
-Pizza.belongsTo(PizzaCategory);
+PizzaModel.belongsTo(PizzaCategoryModel);
 
-const initDb = async () => {
-  try {
-    await sequelize.authenticate();
-    console.log('La connexion à la base de données "Mamamia pizz" a bien été établie.');
+const initDb = () => {
+    return sequelize.sync({ force: true })
+        .then(() => {
+          console.log("Init DB OK !");
+            // const reservations = [
+            //     {
+            //         surname: 'John',
+            //         name: 'Doe',
+            //         telephone: '123456789',
+            //         email: 'john@example.com',
+            //         reservation_date: '2023-05-25',
+            //         reservation_time: '18:00:00',
+            //         numbre_people: 4,
+            //         message: 'Sample message'
+            //     },
+            //     // Ajoutez d'autres réservations ici si nécessaire
+            // ];
 
-    // Synchronisation des modèles et création des données initiales
-    await sequelize.sync({ force: true });
-
-    // await Reservation.bulkCreate(reservations);
-
-    const passwordHash = await bcrypt.hash('mdp', 10);
-    await Promise.all([
-      User.create({
-        username: 'paul',
-        password: passwordHash,
-        roles: ['user', 'admin']
-      }),
-      User.create({
-        username: 'pierre',
-        password: passwordHash,
-        roles: ['user']
-      })
-    ]);
-
-    console.log('Initialisation de la base de données terminée.');
-  } catch (error) {
-    console.error('Erreur lors de l\'initialisation de la base de données :', error);
-  }
+            // // Création des réservations
+            // return ReservationModel.bulkCreate(reservations)
+            //     .then(() => {
+            //         // Création des utilisateurs
+            //         return Promise.all([
+            //             bcrypt.hash('mdp', 10).then((hash) => {
+            //                 return UserModel.create({
+            //                     username: 'paul',
+            //                     password: hash,
+            //                     roles: ['user', 'admin']
+            //                 });
+            //             }),
+            //             bcrypt.hash('mdp', 10).then((hash) => {
+            //                 return UserModel.create({
+            //                     username: 'pierre',
+            //                     password: hash,
+            //                     roles: ['user']
+            //                 });
+            //             })
+            //         ]);
+            //     });
+        })
+        .catch(error => {
+            console.error('Erreur lors de l\'initialisation de la base de données :', error);
+        });
 };
 
+sequelize.authenticate()
+    .then(() => {
+        console.log('La connexion à la base de données "Mamamia pizz" a bien été établie.');
+    })
+    .catch(error => {
+        console.error(`Impossible de se connecter à la base de données : ${error}`);
+    });
+
 module.exports = {
-  sequelize,
-  DataTypes,
-  initDb
+    sequelize,
+    ReservationModel,
+    initDb
 };

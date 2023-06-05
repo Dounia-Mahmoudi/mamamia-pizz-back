@@ -1,45 +1,41 @@
-// Définition du modèle Reservation
-const Reservation = (sequelize, DataTypes) => {
+module.exports = (sequelize, DataTypes) => {
   return sequelize.define('reservation', {
     id: {
-      type: DataTypes.INTEGER, // Type de données : entier
-      primaryKey: true, // Clé primaire
-      autoIncrement: true // Auto-incrémentation
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
     },
     surname: {
-      type: DataTypes.STRING, // Type de données : chaîne de caractères
-      allowNull: false // Non autorisé d'être nul (obligatoire)
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     name: {
-      type: DataTypes.STRING, // Type de données : chaîne de caractères
-      allowNull: false // Non autorisé d'être nul (obligatoire)
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     phone: {
-      type: DataTypes.STRING, // Type de données : chaîne de caractères
-      allowNull: false // Non autorisé d'être nul (obligatoire)
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     email: {
-      type: DataTypes.STRING, // Type de données : chaîne de caractères
-      allowNull: false // Non autorisé d'être nul (obligatoire)
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     date_reservation: {
-      type: DataTypes.DATE, // Type de données : date
-      allowNull: false // Non autorisé d'être nul (obligatoire)
+      type: DataTypes.DATE,
+      allowNull: false,
     },
     hour_reservation: {
-      type: DataTypes.TIME, // Type de données : heure
-      allowNull: false // Non autorisé d'être nul (obligatoire)
+      type: DataTypes.TIME,
+      allowNull: false,
     },
     number_of_people: {
-      type: DataTypes.INTEGER, // Type de données : entier
-      allowNull: false // Non autorisé d'être nul (obligatoire)
+      type: DataTypes.INTEGER,
+      allowNull: false,
     },
     message: {
-      type: DataTypes.TEXT, // Type de données : texte
-      allowNull: true // Autorisé d'être nul (optionnel)
-    }
-  })
-}
-
-// Exportation du modèle Reservation
-module.exports = Reservation;
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
+  });
+};

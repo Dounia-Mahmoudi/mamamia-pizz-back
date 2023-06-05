@@ -7,6 +7,6 @@ const authController = require('../controllers/authController');
 router.get('/', pizzaController.getAllPizzas);
 
 // Route pour récupérer une pizza spécifique par son ID
-router.get('/:id', pizzaController.getPizzaById);
+//router.get('/:id', pizzaController.getPizzaById);
 
 module.exports = router;

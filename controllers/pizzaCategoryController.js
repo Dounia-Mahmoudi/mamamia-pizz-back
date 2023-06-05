@@ -1,9 +1,9 @@
-const Pizzacategory = require('../models/pizzacategory');
+const PizzaCategory = require('../models/pizzaCategory');
 
 // Récupération de toutes les catégories de pizza
-exports.getAllpizzacategory = async (req, res) => {
+exports.getAllPizzacategories = async (req, res) => {
   try {
-    const pizzaCategories = await Pizzacategory.findAll();
+    const pizzaCategories = await PizzaCategory.findAll();
     res.json(pizzaCategories);
   } catch (error) {
     console.error(error);
@@ -12,18 +12,12 @@ exports.getAllpizzacategory = async (req, res) => {
 };
 
 // Création d'une nouvelle catégorie de pizza
-exports.createpizzacategory = async (req, res) => {
+exports.createPizzacategory = async (req, res) => {
   try {
-    const pizzaCategory = await Pizzacategory.create(req.body);
+    const pizzaCategory = await PizzaCategory.create(req.body);
     res.status(201).json(pizzaCategory);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Erreur serveur' });
   }
-};
-
-// Exportation des fonctions de contrôleur
-module.exports = {
-  getAllPizzacategories,
-  createPizzacategory,
 };

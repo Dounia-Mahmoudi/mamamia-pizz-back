@@ -10,8 +10,8 @@ router.route('/')
   .post(authController.restrictTo('admin'), reservationController.createReservation);
 
 router.route('/:id')
-  .get(authController.restrictTo('admin'), reservationController.getReservation)
-  .put(authController.restrictTo('admin'), reservationController.updateReservation)
+  //.get(authController.restrictTo('admin'), reservationController.getReservation)
+  //.put(authController.restrictTo('admin'), reservationController.updateReservation)
   .delete(authController.restrictTo('admin'), reservationController.deleteReservation);
 
 module.exports = router;
